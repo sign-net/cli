@@ -6,6 +6,7 @@ import (
 	"os"
 	"path/filepath"
 
+	"github.com/CosmWasm/wasmd/x/wasm"
 	"github.com/cosmos/cosmos-sdk/baseapp"
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/config"
@@ -45,6 +46,8 @@ type (
 		invCheckPeriod uint,
 		encodingConfig EncodingConfig,
 		appOpts servertypes.AppOptions,
+		wasmOpts []wasm.Option,
+		enabledProposals []wasm.ProposalType,
 		baseAppOptions ...func(*baseapp.BaseApp),
 	) App
 
@@ -363,6 +366,8 @@ func (a appCreator) newApp(
 		cast.ToUint(appOpts.Get(server.FlagInvCheckPeriod)),
 		a.encodingConfig,
 		appOpts,
+		nil,
+		wasm.EnableAllProposals,
 		baseapp.SetPruning(pruningOpts),
 		baseapp.SetMinGasPrices(cast.ToString(appOpts.Get(server.FlagMinGasPrices))),
 		baseapp.SetMinRetainBlocks(cast.ToUint64(appOpts.Get(server.FlagMinRetainBlocks))),
@@ -405,6 +410,8 @@ func (a appCreator) appExport(
 		uint(1),
 		a.encodingConfig,
 		appOpts,
+		nil,
+		wasm.EnableAllProposals,
 	)
 
 	if height != -1 {
